@@ -19,7 +19,7 @@ namespace Proxy
         {
             float now = (float)DateTime.Today.ToOADate();
 
-            if (listCache == null && (now - listRequestedDate) >= timeFoNewList) //Requested again if a week has passed.
+            if (listCache == null || (now - listRequestedDate) >= timeFoNewList) //Requested again if a week has passed.
             {
                 listCache = await service.ListMPVideos();
                 listRequestedDate = now;
