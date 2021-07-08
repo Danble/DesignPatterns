@@ -11,20 +11,24 @@ namespace Proxy
         private ListVideos listCache;
         private Video videoCache;
         private string downloadedVideo;
-        bool needReset;
+        private float listRequestedDate = 0;
+        private float timeFoNewList = 7;
 
         public CachedYouTubeClass(YouTubeLib s) { service = s; }
         public async Task<ListVideos> ListMPVideos()
         {
-            if(listCache == null || needReset)
+            float now = (float)DateTime.Today.ToOADate();
+
+            if (listCache == null && (now - listRequestedDate) >= timeFoNewList) //Requested again if a week has passed.
             {
                 listCache = await service.ListMPVideos();
+                listRequestedDate = now;
             }
             return listCache;
         }
         public async Task<Video> GetVideoInfo(string id)
         {
-            if(videoCache == null || needReset)
+            if(videoCache == null || videoCache.id != id)
             {
                 videoCache = await service.GetVideoInfo(id);
             }
@@ -32,13 +36,11 @@ namespace Proxy
         }
         public async Task<string> DownloadVideo(string id)
         {
-            if(downloadedVideo == null || needReset)
+            if(downloadedVideo == null || downloadedVideo != id)
             {
                 downloadedVideo = await service.DownloadVideo(id);
             }
-            return downloadedVideo;
+            return $"This is your downloaded video with id: {downloadedVideo}.";
         }
-        public void Reset() { needReset = true; }
-        public void AvoidReset() { needReset = false; }
     }
 }

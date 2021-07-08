@@ -35,7 +35,7 @@ namespace Proxy
         {
             // Mocking a video download.
             await Task.Delay(3500);
-            return $"This is your downloaded video with id: {id}.";
+            return id;
         }
     }
 }
